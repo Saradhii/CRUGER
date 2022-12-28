@@ -1,0 +1,71 @@
+<!doctype html>
+<html>
+    <head>
+        <title>CRUGER</title>
+        <link rel="stylesheet" href="css/style.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+    </head>
+    <body class="dark">
+        <div class="convomain">
+           <div class="convos">
+            <form id="sent">
+            <input class="txts" type="text"/>
+            <input type="submit"  value="send"/>
+            </form>
+            <div id="coco">
+
+            </div>
+           </div>
+           <div>
+           <div id="container">
+            
+           </div>
+           <script src="lib/sketch.min.js"></script>
+           <script src="js/tentacles.js"></script>
+           </div>
+        </div>
+    </body>
+</html>
+<script>
+
+    const handleSubmit = async(event)=>{
+        event.preventDefault();
+        var txt = document.querySelector(".txts").value;
+        console.log(txt);
+
+        let res = await fetch('https://api.openai.com/v1/completions', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer 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'
+    },
+    // body: '{\n  "model": "text-davinci-003",\n  "prompt": "You: What have you been up to?\\nFriend: Watching old movies.\\nYou: Did you watch anything interesting?\\nFriend:",\n  "temperature": 0.5,\n  "max_tokens": 60,\n  "top_p": 1.0,\n  "frequency_penalty": 0.5,\n  "presence_penalty": 0.0,\n  "stop": ["You:"]\n}',
+    body: JSON.stringify({
+        'model': 'text-davinci-003',
+        'prompt': `You: ${txt}\nFriend:`,
+        'temperature': 0.5,
+        'max_tokens': 60,
+        'top_p': 1,
+        'frequency_penalty': 0.5,
+        'presence_penalty': 0,
+        'stop': [
+            'You:'
+        ]
+    })
+    });
+    let data = await res.json();
+    appenddata(data);
+    };
+    let formdata = document.querySelector("#sent")
+    formdata.addEventListener("submit", handleSubmit);
+    var coco = document.querySelector("#coco");
+    function appenddata(data){
+        data.choices.forEach(function(elem,index){
+            var res = document.createElement("p");
+            res.innerText = elem.text;
+            coco.append(res);
+        });
+    }
+
+
+</script>
